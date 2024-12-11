@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>QR Menü</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Font Awesome CSS link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <!-- CSS dosyası -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Header -->
+   <!-- Header -->
+<header class="header" id="header">
+    <!-- Logo -->
+    <div class="header-content" id="headerContent">
+        <img src="specialLogo.png" alt="Cafe Logo" class="cafe-logo">
+
+        <!-- Firma İsmi ve Slogan -->
+        <div class="brand-info">
+            <h1 class="brand-name">SPECİAL İZMİT</h1>
+            <h2 class="brand-slogan">Özel Anlar, Özel Tatlar!</h2>
+        </div>
+    </div>
+
+    <!-- QR Menü İbaresi -->
+    <div class="qr-menu-label" id="qrMenuLabel">
+        <p>QR Menü</p>
+    </div>
+
+    <!-- Sosyal Medya İkonları -->
+    <div class="social-icons" id="socialIcons">
+        <a href="https://www.instagram.com/specializmit/profilecard/?igsh=MXMwdGExYnc0dm45NA==" target="_blank"><i class="fab fa-instagram"></i></a>
+    </div>
+
+    <!-- Aşağı Kaydırma Oku -->
+    <div class="scroll-down" id="scrollDown">
+        <a href="#menuContent"><i class="fas fa-chevron-down"></i></a>
+    </div>
+</header>
+
+
+    <!-- Ana İçerik -->
+    <div class="menu-container" id="menuContent"></div>
+
+    <!-- Ürün Resim Modalı -->
+    <div id="imageModal" class="image-modal">
+        <span id="modalClose" class="close">&times;</span>
+        <img id="modalImage" class="modal-content" src="" alt="Ürün Resmi">
+    </div>
+
+    <!-- Google Yorum Butonu -->
+    <div class="google-review-button" id="googleReviewButton">
+        <a href="" target="_blank" class="btn-google-review">
+            <i class="fab fa-google"></i> Google Yorum Yap
+        </a>
+    </div>
+
+    <!-- Firebase JS SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <!-- JS Kodları -->
+    <script src="script.js"></script>
+</body>
+</html>

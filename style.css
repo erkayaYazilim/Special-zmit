@@ -1,0 +1,502 @@
+/* Temel Sıfırlamalar */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+
+    background-color: #FFFFFF; /* Arka plan beyaz */
+    color: #333333;
+
+    font-family: 'Montserrat', sans-serif;
+    overflow-x: hidden;
+}
+
+/* Renk Paleti:
+   Yeşil: #2E7D32
+   Beyaz: #FFFFFF
+   Siyah: #000000
+*/
+
+/* Header */
+.header {
+    background-image: url('special\ arka\ plan.png'); /* Arka plan resminizin yolunu ekleyin */
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    height: 95vh; /* Ekranın tamamını kaplar */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: height 0.3s ease;
+}
+
+.header.hidden {
+    display: none;
+}
+
+/* Kategori seçildiğinde header'ı küçült */
+.header.category-header {
+    height: 80px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: #2E7D32;
+    transition: all 0.5s ease-in-out; 
+}
+
+/* Header İçeriği Küçük Boyut */
+.header-content.small {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 20px;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.header-content.hidden {
+    display: none;
+}
+
+@keyframes fadeInDownLogo {
+    from {
+        opacity: 0;
+        transform: translateY(-30px) scale(1);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes fadeInUpText {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.cafe-logo {
+    width: 180px;
+    height: auto;
+    margin-bottom: 10px;
+    opacity: 0;
+    animation: fadeInDownLogo 1s ease forwards;
+    /* Logo giriş animasyonu 1s, bitince metinler görünecek */
+}
+
+/* Firma İsmi ve Slogan için stil */
+.brand-info {
+    text-align: center;
+    opacity: 0;
+    animation: fadeInUpText 1s ease forwards;
+    animation-delay: 1s; /* Logo animasyonu bitince 1s sonra firma ismi ve sloganı gelsin */
+}
+
+.brand-name {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #319736;
+    margin-bottom: 5px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.brand-slogan {
+    font-size: 1.5em;
+    color: #c7c1c1;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+/* QR Menü Label */
+.qr-menu-label {
+    position: absolute;
+    bottom: 20px;
+    background-color: rgba(255,255,255,0.9);
+    padding: 10px 20px;
+    border-radius: 20px;
+    animation: fadeInUp 1s ease-in-out;
+    cursor: pointer;
+}
+
+.qr-menu-label.hidden {
+    display: none;
+}
+
+.qr-menu-label p {
+    font-size: 1.5em;
+    color: #2E7D32;
+    font-weight: bold;
+}
+
+/* Sosyal İkonlar */
+.social-icons {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.social-icons.hidden {
+    display: none;
+}
+
+.social-icons a {
+    text-decoration: none;
+    color: #FFFFFF;
+    font-size: 2em;
+    transition: color 0.3s ease;
+}
+
+.social-icons a:hover {
+    color: #000000;
+}
+
+/* Aşağı Kaydırma Oku */
+.scroll-down {
+    position: absolute;
+    bottom: 80px;
+    animation: bounce 2s infinite;
+}
+
+.scroll-down.hidden {
+    display: none;
+}
+
+.scroll-down a {
+    color: #FFFFFF;
+    font-size: 2.5em;
+    text-decoration: none;
+}
+
+.scroll-down a:hover {
+    color: #000000;
+}
+
+/* Animasyonlar */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-15px);
+    }
+    60% {
+        transform: translateY(-7px);
+    }
+}
+
+/* Menü Konteyner */
+.menu-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    background-color: #FFFFFF;
+}
+
+.menu-container.products-view {
+    padding-top: 100px; 
+}
+
+/* Kategori */
+.category-container {
+    margin-bottom: 30px;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+}
+
+.category-container:nth-child(even) {
+    animation-delay: 0.2s;
+}
+
+.category-container:nth-child(odd) {
+    animation-delay: 0.4s;
+}
+
+.category {
+    position: relative;
+    padding: 30px 10px;
+    color: #ffffff;
+    text-align: center;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 1.2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+.category h2 {
+    position: relative;
+    z-index: 2;
+    color: #FFFFFF;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+}
+
+.category::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1;
+    border-radius: 10px;
+}
+
+.category:hover {
+    transform: scale(1.02);
+}
+
+/* Ürün Detayları */
+.product-details {
+    background-color: #f9f9f9;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+}
+
+.product-details:nth-child(even) {
+    animation-delay: 0.2s;
+}
+
+.product-details:nth-child(odd) {
+    animation-delay: 0.4s;
+}
+
+.product-image {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.product-image:hover {
+    transform: scale(1.05);
+}
+
+.product-info {
+    padding: 20px;
+}
+
+.product-title {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #2E7D32;
+    margin-bottom: 10px;
+}
+
+.product-price {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #000000;
+    margin-bottom: 15px;
+}
+
+.product-description {
+    font-size: 1.2em;
+    color: #555;
+    line-height: 1.6;
+}
+
+/* Google Yorum Butonu */
+.google-review-button {
+    text-align: center;
+    margin: 30px 0;
+}
+
+.btn-google-review {
+    display: inline-block;
+    background-color: #2E7D32;
+    color: #FFFFFF;
+    padding: 15px 25px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: 1.2em;
+    transition: background-color 0.3s ease;
+}
+
+.btn-google-review:hover {
+    background-color: #1B5E20;
+}
+
+/* Image Modal */
+.image-modal {
+    display: none;
+    position: fixed;
+    z-index: 1500;
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.9);
+}
+
+.image-modal .close {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    color: #fff;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.image-modal .close:hover {
+    color: #bbb;
+}
+
+.image-modal .modal-content {
+    margin: auto;
+    display: block;
+    width: 80%;
+    max-width: 700px;
+}
+
+/* Header Overlay (Geri Butonu ve Kategori Adı) */
+.header-overlay {
+    background-color: rgba(0,0,0,0.6);
+    width: 100%;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.header-overlay.hidden {
+    display: none;
+}
+
+.header-overlay.visible {
+    display: flex;
+}
+
+.header-overlay h2 {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+    margin-left: 10px;
+}
+
+.back-button {
+    background-color: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 2em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.back-button i {
+    margin-right: 5px;
+}
+
+.back-button:hover {
+    color: #FFFF99;
+}
+
+/* FadeIn Animasyonu */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mobil Cihazlar İçin Ayarlamalar */
+@media screen and (max-width: 768px) {
+    .cafe-logo {
+        width: 400px;
+    }
+
+    .scroll-down {
+        bottom: 40px;
+    }
+
+    .category h2 {
+        font-size: 1.3em;
+    }
+
+    .product-title {
+        font-size: 1.5em;
+    }
+
+    .product-price {
+        font-size: 1.2em;
+    }
+
+    .product-description {
+        font-size: 1em;
+    }
+
+    .header.category-header {
+        height: 60px;
+    }
+
+    .header-overlay h2 {
+        font-size: 2em;
+    }
+
+    .back-button {
+        font-size: 2em;
+    }
+
+    .product-image {
+        height: 300px;
+    }
+}
