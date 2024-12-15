@@ -22,7 +22,7 @@ body {
 
 /* Header */
 .header {
-    background-image: url('spcial.png'); /* Arka plan resminizin yolunu ekleyin */
+    background-image: url('special.png'); /* Arka plan resminizin yolunu ekleyin */
     background-size: cover;
     background-position: center;
     position: relative;
