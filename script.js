@@ -20,23 +20,41 @@ let productsData = {}; // Ürünleri depola
 let categoriesHTML = ''; // Kategoriler ilk yüklendiğinde burada saklanacak
 let sortedCategories = []; // Sıralanmış kategorileri sakla
 
+// Modal Elementlerini Tanımla
+const modal = document.getElementById('imageModal');
+const modalImg = document.getElementById('modalImage');
+const modalClose = document.getElementById('modalClose');
+
+// Modal Başlangıçta Gizli
+modal.style.display = 'none';
+
+// Modal'ı Kapatma İşlevi
+if (modalClose) {
+    modalClose.onclick = function() {
+        modal.style.display = "none";
+    };
+}
+
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+};
+
+// Dil Ayarlama Fonksiyonu
 function setLanguage(lang) {
     selectedLanguage = lang;
     localStorage.setItem('selectedLanguage', lang);
     fetchMenuItems();
 }
 
-// Sayfa yüklendiğinde seçili dili kontrol et
+// Sayfa Yüklendiğinde Yapılacaklar
 document.addEventListener('DOMContentLoaded', () => {
     const lang = localStorage.getItem('selectedLanguage');
     if (lang) {
         selectedLanguage = lang;
     }
     setLanguage(selectedLanguage);
-
-    // Sayfa yüklendiğinde modalin gizli olduğundan emin olun
-    const modal = document.getElementById('imageModal');
-    modal.style.display = 'none';
 
     // QR Menü butonuna tıklama olayı ekle
     const qrMenuLabel = document.getElementById('qrMenuLabel');
@@ -55,12 +73,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } else {
             // Eğer başka bir durum varsa, varsayılan olarak header'ı göster
-            showInitialView();
+            showInitialView(false);
         }
     });
+
+    // Başlangıç Görünümünü Göster ve İlk Durumu Ayarla
+    showInitialView(false);
+    history.replaceState({ view: 'categories' }, 'Kategoriler', '#categories');
 });
 
-// Header'ı gizle ve kategorileri göster
+// Header'ı Gizle ve Kategorileri Göster
 function hideHeaderAndShowCategories(pushState = true) {
     const header = document.getElementById('header');
     header.classList.add('hidden');
@@ -71,7 +93,7 @@ function hideHeaderAndShowCategories(pushState = true) {
     }
 }
 
-// Kategorileri yeniden göster
+// Kategorileri Yeniden Göster
 function showCategoriesView(pushState = true) {
     const header = document.getElementById('header');
     header.classList.remove('hidden');
@@ -111,7 +133,46 @@ function showCategoriesView(pushState = true) {
     }
 }
 
-// Menü öğelerini Firebase'den çek
+// Başlangıç Görünümünü Göster
+function showInitialView(pushState = true) {
+    const header = document.getElementById('header');
+    header.classList.remove('category-header');
+    header.style.backgroundImage = `url('special.png')`;
+
+    const headerContent = document.getElementById('headerContent');
+    headerContent.classList.remove('hidden');
+
+    document.getElementById('qrMenuLabel').classList.remove('hidden');
+    document.getElementById('socialIcons').classList.remove('hidden');
+    document.getElementById('scrollDown').classList.remove('hidden');
+
+    document.getElementById('googleReviewButton').style.display = 'block';
+    document.body.classList.remove('header-hidden');
+
+    const overlayDiv = document.querySelector('.header-overlay');
+    if (overlayDiv) {
+        overlayDiv.classList.remove('visible');
+        overlayDiv.innerHTML = '';
+    }
+
+    const menuContent = document.getElementById('menuContent');
+    menuContent.classList.remove('products-view');
+    menuContent.innerHTML = categoriesHTML;
+
+    // Kategori tıklama olaylarını tekrar ekle
+    document.querySelectorAll('.category').forEach((categoryEl, i) => {
+        categoryEl.addEventListener('click', () => {
+            const categoryInfo = sortedCategories[i];
+            showCategoryProducts(categoryInfo);
+        });
+    });
+
+    if (pushState) {
+        history.pushState({ view: 'categories' }, 'Kategoriler', '#categories');
+    }
+}
+
+// Menü Öğelerini Firebase'den Çek
 async function fetchMenuItems() {
     const menuContent = document.getElementById('menuContent');
     menuContent.innerHTML = '';
@@ -129,7 +190,7 @@ async function fetchMenuItems() {
         const categoryData = catSnapshot.val() || {};
         const productsDataRaw = productSnapshot.val() || {};
 
-        // Kategorileri işle
+        // Kategorileri İşle
         for (let categoryId in categoryData) {
             const categoryInfo = categoryData[categoryId];
             if (categoryInfo && categoryInfo.status !== 'inactive') {
@@ -140,7 +201,7 @@ async function fetchMenuItems() {
             }
         }
 
-        // Ürünleri işle
+        // Ürünleri İşle
         for (let productId in productsDataRaw) {
             const product = productsDataRaw[productId];
             if (product && product.categoryId && categoriesData[product.categoryId]) {
@@ -155,14 +216,14 @@ async function fetchMenuItems() {
             }
         }
 
-        // Kategorileri 'order' değerine göre sırala
+        // Kategorileri 'order' Değerine Göre Sırala
         sortedCategories = Object.values(categoriesData).sort((a, b) => {
             const orderA = a.order || 0;
             const orderB = b.order || 0;
             return orderA - orderB;
         });
 
-        // Kategorileri görüntüle
+        // Kategorileri Görüntüle
         let tempHTML = '';
         sortedCategories.forEach((categoryInfo, index) => {
             const categoryName = categoryInfo['name_' + selectedLanguage] || categoryInfo['name_tr'] || 'Kategori İsmi';
@@ -170,14 +231,14 @@ async function fetchMenuItems() {
 
             tempHTML += `
             <div class="category-container" style="animation-delay: ${index * 0.2}s;">
-                <div class="category" style="background-image: url(${categoryImageUrl});">
+                <div class="category" style="background-image: url(${categoryImageUrl}); cursor: pointer;">
                     <h2>${categoryName}</h2>
                 </div>
             </div>`;
         });
 
         menuContent.innerHTML = tempHTML;
-        categoriesHTML = tempHTML; // Kategori HTML'sini sakla
+        categoriesHTML = tempHTML; // Kategori HTML'sini Sakla
 
         // Kategori tıklama olaylarını ekle
         document.querySelectorAll('.category').forEach((categoryEl, i) => {
@@ -192,7 +253,7 @@ async function fetchMenuItems() {
     }
 }
 
-// Seçili kategorinin ürünlerini göster
+// Seçili Kategorinin Ürünlerini Göster
 function showCategoryProducts(categoryInfo, pushState = true) {
     const menuContent = document.getElementById('menuContent');
     menuContent.innerHTML = '';
@@ -241,7 +302,7 @@ function showCategoryProducts(categoryInfo, pushState = true) {
 
     header.classList.remove('hidden');
 
-    // Ürünleri görüntüle
+    // Ürünleri Görüntüle
     products.forEach((product, index) => {
         const productDetailsDiv = document.createElement('div');
         productDetailsDiv.classList.add('product-details');
@@ -301,68 +362,14 @@ function showCategoryProducts(categoryInfo, pushState = true) {
     }
 }
 
-// Seçili kategoriye dönmek için başlangıç görünümünü göster
-function showInitialView() {
-    const header = document.getElementById('header');
-    header.classList.remove('category-header');
-    header.style.backgroundImage = `url('special.png')`;
-
-    const headerContent = document.getElementById('headerContent');
-    headerContent.classList.remove('hidden');
-
-    document.getElementById('qrMenuLabel').classList.remove('hidden');
-    document.getElementById('socialIcons').classList.remove('hidden');
-    document.getElementById('scrollDown').classList.remove('hidden');
-
-    document.getElementById('googleReviewButton').style.display = 'block';
-    document.body.classList.remove('header-hidden');
-
-    const overlayDiv = document.querySelector('.header-overlay');
-    if (overlayDiv) {
-        overlayDiv.classList.remove('visible');
-        overlayDiv.innerHTML = '';
-    }
-
-    const menuContent = document.getElementById('menuContent');
-    menuContent.classList.remove('products-view');
-    menuContent.innerHTML = categoriesHTML;
-
-    // Kategori tıklama olaylarını tekrar ekle
-    document.querySelectorAll('.category').forEach((categoryEl, i) => {
-        categoryEl.addEventListener('click', () => {
-            const categoryInfo = sortedCategories[i];
-            showCategoryProducts(categoryInfo);
-        });
-    });
-
-    // Geçerli durumu push etme (gerekli değil çünkü popstate zaten yönetiliyor)
-}
-
-// Ürün resim modali aç
+// Ürün Resim Modali Aç
 function openImageModal(imageUrl, altText) {
-    const modal = document.getElementById('imageModal');
-    const modalImg = document.getElementById('modalImage');
     modal.style.display = "block";
     modalImg.src = imageUrl;
     modalImg.alt = altText;
 }
 
-// Modali kapat
-const modalClose = document.getElementById('modalClose');
-if (modalClose) {
-    modalClose.onclick = function() {
-        const modal = document.getElementById('imageModal');
-        modal.style.display = "none";
-    };
-}
-
-window.onclick = function(event) {
-    const modal = document.getElementById('imageModal');
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
-};
-
+// Header Animasyonunu Sıfırla (Opsiyonel)
 function resetHeaderAnimation() {
     const header = document.getElementById('header');
     header.classList.remove('category-header');
