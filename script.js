@@ -43,13 +43,72 @@ document.addEventListener('DOMContentLoaded', () => {
     qrMenuLabel.addEventListener('click', () => {
         hideHeaderAndShowCategories();
     });
+
+    // Popstate olayını dinle
+    window.addEventListener('popstate', (event) => {
+        if (event.state && event.state.view === 'categories') {
+            showCategoriesView(false);
+        } else if (event.state && event.state.view === 'products' && event.state.categoryId) {
+            const categoryInfo = categoriesData[event.state.categoryId];
+            if (categoryInfo) {
+                showCategoryProducts(categoryInfo, false);
+            }
+        } else {
+            // Eğer başka bir durum varsa, varsayılan olarak header'ı göster
+            showInitialView();
+        }
+    });
 });
 
 // Header'ı gizle ve kategorileri göster
-function hideHeaderAndShowCategories() {
+function hideHeaderAndShowCategories(pushState = true) {
     const header = document.getElementById('header');
     header.classList.add('hidden');
     fetchMenuItems();
+
+    if (pushState) {
+        history.pushState({ view: 'categories' }, 'Kategoriler', '#categories');
+    }
+}
+
+// Kategorileri yeniden göster
+function showCategoriesView(pushState = true) {
+    const header = document.getElementById('header');
+    header.classList.remove('hidden');
+    header.classList.remove('category-header');
+    header.style.backgroundImage = `url('special.png')`;
+
+    const headerContent = document.getElementById('headerContent');
+    headerContent.classList.remove('hidden');
+
+    document.getElementById('qrMenuLabel').classList.remove('hidden');
+    document.getElementById('socialIcons').classList.remove('hidden');
+    document.getElementById('scrollDown').classList.remove('hidden');
+
+    document.getElementById('googleReviewButton').style.display = 'block';
+    document.body.classList.remove('header-hidden');
+
+    const overlayDiv = document.querySelector('.header-overlay');
+    if (overlayDiv) {
+        overlayDiv.classList.remove('visible');
+        overlayDiv.innerHTML = '';
+    }
+
+    const menuContent = document.getElementById('menuContent');
+    menuContent.classList.remove('products-view');
+    menuContent.innerHTML = categoriesHTML;
+
+    // Kategori tıklama olaylarını tekrar ekle
+    document.querySelectorAll('.category').forEach((categoryEl, i) => {
+        categoryEl.addEventListener('click', () => {
+            const categoryInfo = sortedCategories[i];
+            showCategoryProducts(categoryInfo);
+        });
+    });
+
+    if (pushState) {
+        history.pushState({ view: 'categories' }, 'Kategoriler', '#categories');
+    }
 }
 
 // Menü öğelerini Firebase'den çek
@@ -134,7 +193,7 @@ async function fetchMenuItems() {
 }
 
 // Seçili kategorinin ürünlerini göster
-function showCategoryProducts(categoryInfo) {
+function showCategoryProducts(categoryInfo, pushState = true) {
     const menuContent = document.getElementById('menuContent');
     menuContent.innerHTML = '';
 
@@ -168,34 +227,7 @@ function showCategoryProducts(categoryInfo) {
 
     // Geri butonuna basılınca kategoriler geri gelsin
     backButton.addEventListener('click', () => {
-        const modal = document.getElementById('imageModal');
-        modal.style.display = 'none';
-
-        header.classList.remove('category-header');
-        header.style.backgroundImage = `url('şato.png')`;
-        header.classList.add('hidden');
-
-        headerContent.classList.remove('hidden');
-        document.getElementById('qrMenuLabel').classList.remove('hidden');
-        document.getElementById('socialIcons').classList.remove('hidden');
-        document.getElementById('scrollDown').classList.remove('hidden');
-
-        document.getElementById('googleReviewButton').style.display = 'block';
-        document.body.classList.remove('header-hidden');
-
-        overlayDiv.classList.remove('visible');
-        menuContent.classList.remove('products-view');
-
-        // Kategorileri yeniden yüklemek yerine kaydettiğimiz HTML'yi geri koy
-        menuContent.innerHTML = categoriesHTML;
-
-        // Kategori elemanlarına tekrar tıklama olayı ekle
-        document.querySelectorAll('.category').forEach((categoryEl, i) => {
-            categoryEl.addEventListener('click', () => {
-                const catInfo = sortedCategories[i];
-                showCategoryProducts(catInfo);
-            });
-        });
+        history.back();
     });
 
     const categoryTitle = document.createElement('h2');
@@ -211,8 +243,6 @@ function showCategoryProducts(categoryInfo) {
 
     // Ürünleri görüntüle
     products.forEach((product, index) => {
-        // Burada ürünlerinizi oluşturacak kodunuzu ekleyin
-        // Örneğin:
         const productDetailsDiv = document.createElement('div');
         productDetailsDiv.classList.add('product-details');
         productDetailsDiv.style.animationDelay = `${index * 0.2}s`;
@@ -265,6 +295,47 @@ function showCategoryProducts(categoryInfo) {
 
     // Ürünler yüklendikten sonra sayfanın en üstüne kaydır
     window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    if (pushState) {
+        history.pushState({ view: 'products', categoryId: categoryId }, categoryInfo['name_' + selectedLanguage] || categoryInfo['name_tr'] || 'Kategori', `#category-${categoryId}`);
+    }
+}
+
+// Seçili kategoriye dönmek için başlangıç görünümünü göster
+function showInitialView() {
+    const header = document.getElementById('header');
+    header.classList.remove('category-header');
+    header.style.backgroundImage = `url('special.png')`;
+
+    const headerContent = document.getElementById('headerContent');
+    headerContent.classList.remove('hidden');
+
+    document.getElementById('qrMenuLabel').classList.remove('hidden');
+    document.getElementById('socialIcons').classList.remove('hidden');
+    document.getElementById('scrollDown').classList.remove('hidden');
+
+    document.getElementById('googleReviewButton').style.display = 'block';
+    document.body.classList.remove('header-hidden');
+
+    const overlayDiv = document.querySelector('.header-overlay');
+    if (overlayDiv) {
+        overlayDiv.classList.remove('visible');
+        overlayDiv.innerHTML = '';
+    }
+
+    const menuContent = document.getElementById('menuContent');
+    menuContent.classList.remove('products-view');
+    menuContent.innerHTML = categoriesHTML;
+
+    // Kategori tıklama olaylarını tekrar ekle
+    document.querySelectorAll('.category').forEach((categoryEl, i) => {
+        categoryEl.addEventListener('click', () => {
+            const categoryInfo = sortedCategories[i];
+            showCategoryProducts(categoryInfo);
+        });
+    });
+
+    // Geçerli durumu push etme (gerekli değil çünkü popstate zaten yönetiliyor)
 }
 
 // Ürün resim modali aç
@@ -277,15 +348,16 @@ function openImageModal(imageUrl, altText) {
 }
 
 // Modali kapat
-const modal = document.getElementById('imageModal');
 const modalClose = document.getElementById('modalClose');
 if (modalClose) {
     modalClose.onclick = function() {
+        const modal = document.getElementById('imageModal');
         modal.style.display = "none";
     };
 }
 
 window.onclick = function(event) {
+    const modal = document.getElementById('imageModal');
     if (event.target == modal) {
         modal.style.display = "none";
     }
